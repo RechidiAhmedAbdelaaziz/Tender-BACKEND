@@ -29,7 +29,8 @@ async function bootstrap() {
     .setDescription('The Tender API description')
     .setVersion('1.0')
     .addTag('tender')
-    .build();
+    .addBearerAuth()
+    .build()
 
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

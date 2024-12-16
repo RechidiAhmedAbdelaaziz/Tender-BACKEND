@@ -8,9 +8,10 @@ import { JwtPayload } from 'src/core/types/jwt-payload';
 
 
 const ROLE_GUARD_KEY = 'roleGuard'
+const CHECK_VERIFIED_KEY = 'checkVerified'
 
 export const SetRole = (userRole = UserRoles.USER) => SetMetadata(ROLE_GUARD_KEY, userRole)
-
+export const UnCheckVerified = () => SetMetadata(CHECK_VERIFIED_KEY, true)
 @Injectable()
 export class HttpAuthGuard implements CanActivate {
   constructor(
@@ -29,7 +30,7 @@ export class HttpAuthGuard implements CanActivate {
     try {
       const payload: JwtPayload = this.jwtService.verify(token)
 
-      if (payload.isVerified === false) {
+      if (payload.isVerified !== true && !this.reflector.get<boolean>(CHECK_VERIFIED_KEY, context.getHandler())) {
         throw new HttpException('User is not verified', 600) // 600 is custom code for unverified user
       }
 
@@ -41,7 +42,10 @@ export class HttpAuthGuard implements CanActivate {
 
     }
     catch (e) {
-      throw new HttpException('Token verification failed', 401, { cause: e })
+      const status = e.status || 401
+      const message = e.message || 'Token verification failed'
+
+      throw new HttpException(message, status, { cause: e })
     }
 
 

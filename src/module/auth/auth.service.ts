@@ -1,13 +1,14 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CryptHelper } from 'src/core/helpers/crypt.helper';
 import { AuthToken } from 'src/core/types/auth-token';
 import { JwtPayload } from 'src/core/types/jwt-payload';
-import { RefreshToken, RestPasswordOtp } from 'src/models/auth.entity';
+import { AccountVerificationOtp, RefreshToken, RestPasswordOtp } from 'src/models/auth.entity';
 import { User } from 'src/models/user.entity';
 import { v4 } from 'uuid';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,8 @@ export class AuthService {
         @InjectModel(User.name) private userModel: Model<User>,
         @InjectModel(RefreshToken.name) private refreshTokenModel: Model<RefreshToken>,
         @InjectModel(RestPasswordOtp.name) private restPasswordOtpModel: Model<RestPasswordOtp>,
+        @InjectModel(AccountVerificationOtp.name) private accountVerificationOtpModel: Model<AccountVerificationOtp>,
+        private userServise: UserService,
         private jwtService: JwtService
 
     ) { }
@@ -38,6 +41,8 @@ export class AuthService {
         const password = nonHashedPass ? await CryptHelper.hash(nonHashedPass) : undefined;
 
         const user = await this.userModel.create({ email, phone, password, name });
+
+        await this.generateAccountVerificationOtp(user);
 
         return this.generateToken(user);
     }
@@ -120,8 +125,17 @@ export class AuthService {
         return this.generateToken(user);
     }
 
+    verifyAccount = async (id: Types.ObjectId, otp: number) => {
+        const token = await this.verifyAccountOtp(id, otp);
+        await Promise.all([
+            await this.userServise.updateUser(id, { isVerified: true }),
+            await token.deleteOne(),
+        ]);
 
+        const user = await this.userModel.findById(id).select(this.DEFFAULT_SELECT);
 
+        return this.generateToken(user);
+    }
 
     private async generateToken(user: User): Promise<AuthToken> {
         const payload = (new JwtPayload(user)).toPlainObject()
@@ -163,6 +177,30 @@ export class AuthService {
             throw new HttpException('Invalid code', 400)
 
         return token
+
+    }
+
+    private async verifyAccountOtp(user: User | Types.ObjectId, otp: number) {
+        const token = await this.accountVerificationOtpModel.
+            findOne({ otp, user, expires: { $gte: new Date() } })
+
+        if (!token) throw new HttpException('Invalid code', 400)
+
+        return token
+    }
+
+    async generateAccountVerificationOtp(user: User | Types.ObjectId): Promise<number> {
+        const otp = Math.floor(100000 + Math.random() * 900000)
+
+        const expires = new Date(Date.now() + 1000 * 60 * 5)
+
+        await this.accountVerificationOtpModel.create(
+            { otp, expires, user },
+        )
+
+        // TODO: Send OTP to user email or phone number
+
+        return otp
     }
 
 

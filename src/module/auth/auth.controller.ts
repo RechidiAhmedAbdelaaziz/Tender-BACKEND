@@ -1,18 +1,22 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginBodyDto } from './dto/login.dto';
 import { ApiResponse } from 'src/core/types/api-response';
 import { RegisterBodyDto } from './dto/register.dto';
 import { RefreshTokenQueryDto } from './dto/refresh-token.dto';
 import { CheckResetCodeBodyDto, ForgotPassBodyDto, ResetPassBodyDto } from './dto/reset-password.dto';
-import { SetRole } from './guards/auth.guard';
+import { HttpAuthGuard, SetRole, UnCheckVerified } from './guards/auth.guard';
 import { UserRoles } from 'src/core/enums/user-roles.enum';
+import { VerifyAccountBodyDto } from './dto/verify-account.dto';
+import { CurrentUser } from './decorators/auth.decorator';
+import { Types } from 'mongoose';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-  
+
   @Post('login')
   async login(
     @Body() body: LoginBodyDto
@@ -78,6 +82,36 @@ export class AuthController {
 
     return ApiResponse.success({ tokens });
   }
+
+  @ApiBearerAuth()
+  @UseGuards(HttpAuthGuard)
+  @UnCheckVerified()
+  @Post('resend-verification')
+  async resendVerification(
+    @CurrentUser() userId: Types.ObjectId
+  ) {
+    await this.authService.generateAccountVerificationOtp(userId);
+
+    return ApiResponse.success({ message: 'Verification code sent successfully' });
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(HttpAuthGuard)
+  @UnCheckVerified()
+  @Post('verify-account')
+  async verifyAccount(
+    @Body() body: VerifyAccountBodyDto,
+    @CurrentUser() userId: Types.ObjectId
+  ) {
+    const { otp } = body;
+
+    const tokens = await this.authService.verifyAccount(userId, otp);
+
+    return ApiResponse.success({ tokens });
+  }
+
+
+
 
 
 
