@@ -21,3 +21,16 @@ export class RefreshToken extends AbstractSchema {
 }
 
 
+
+@DSchema()
+export class RestPasswordOtp extends AbstractSchema {
+
+    @Prop({ type: Schema.Types.ObjectId, ref: User.name })
+    user: User
+
+    @Prop()
+    otp: number
+
+    @Prop({ type: Date, index: { expireAfterSeconds: 2 } })
+    expires: Date
+}

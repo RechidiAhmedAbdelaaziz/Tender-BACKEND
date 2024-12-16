@@ -1,6 +1,6 @@
 import { Schema as KScheam, Prop } from "@nestjs/mongoose";
-import { Document, Types } from "mongoose";
 import { AbstractSchema } from "./abstract-schema";
+import { UserRoles } from "../core/enums/user-roles.enum";
 
 
 
@@ -9,9 +9,9 @@ import { AbstractSchema } from "./abstract-schema";
 })
 export class User extends AbstractSchema {
     @Prop()
-    username: string;
+    name: string;
 
-    @Prop()
+    @Prop({ select: false })
     password: string;
 
     @Prop()
@@ -20,6 +20,6 @@ export class User extends AbstractSchema {
     @Prop()
     phone: string;
 
-    @Prop()
+    @Prop({ select: false, default: UserRoles.USER })
     role: UserRoles;
 }

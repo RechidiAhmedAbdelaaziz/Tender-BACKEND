@@ -1,0 +1,30 @@
+name: TenderAPI
+
+services:
+  tenderapi-dev:
+    image: tenderapi-dev
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    container_name: TenderAPI-DEV
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./libs:/usr/src/app/libs
+      - ./node_modules:/usr/src/app/node_modules
+    command: npm run start:dev
+    dns:
+      - 8.8.8.8 # Google DNS
+      - 8.8.4.4 # Google DNS
+    env_file:
+      - .env.development.local
+    depends_on:
+      - tenderdb
+
+  tenderdb:
+    image: mongo
+    container_name: TenderDB
+    ports:
+      - "27017:27017"
+    attach: false
