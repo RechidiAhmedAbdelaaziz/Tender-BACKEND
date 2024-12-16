@@ -20,6 +20,8 @@ export class AuthService {
 
     ) { }
 
+    private DEFFAULT_SELECT = 'password role isVerified';
+
     register = async (
         data: { email: string, phone: string, password?: string, name: string },
     ) => {
@@ -53,7 +55,7 @@ export class AuthService {
 
         const user = await this.userModel.findOne({
             $or: [{ email: login }, { phone: login }]
-        }).select('password');
+        }).select(this.DEFFAULT_SELECT);
 
         if (!user) {
             throw new HttpException('This email or phone number is not registered', 404);
@@ -102,7 +104,7 @@ export class AuthService {
     resetPassword = async (login: string, otp: number, password: string) => {
         const user = await this.userModel.findOne({
             $or: [{ email: login }, { phone: login }]
-        }).select('password');
+        }).select(this.DEFFAULT_SELECT);
 
         if (!user) {
             throw new HttpException('This email or phone number is not registered', 404);
@@ -122,7 +124,7 @@ export class AuthService {
 
 
     private async generateToken(user: User): Promise<AuthToken> {
-        const payload: JwtPayload = { id: user._id }
+        const payload = (new JwtPayload(user)).toPlainObject()
 
         const accessToken = this.jwtService.sign(payload)
         const refreshToken = v4()
@@ -151,7 +153,7 @@ export class AuthService {
         if (typeof user === 'string') {
             user = await this.userModel.findOne({
                 $or: [{ email: user }, { phone: user }]
-            }).select('_id');
+            }).select(this.DEFFAULT_SELECT);
         }
 
         const token = await this.restPasswordOtpModel.

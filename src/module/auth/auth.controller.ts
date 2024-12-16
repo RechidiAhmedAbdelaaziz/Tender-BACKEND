@@ -5,11 +5,14 @@ import { ApiResponse } from 'src/core/types/api-response';
 import { RegisterBodyDto } from './dto/register.dto';
 import { RefreshTokenQueryDto } from './dto/refresh-token.dto';
 import { CheckResetCodeBodyDto, ForgotPassBodyDto, ResetPassBodyDto } from './dto/reset-password.dto';
+import { SetRole } from './guards/auth.guard';
+import { UserRoles } from 'src/core/enums/user-roles.enum';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
+  
   @Post('login')
   async login(
     @Body() body: LoginBodyDto

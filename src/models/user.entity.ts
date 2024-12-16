@@ -22,4 +22,7 @@ export class User extends AbstractSchema {
 
     @Prop({ select: false, default: UserRoles.USER })
     role: UserRoles;
+
+    @Prop({ default: false })
+    isVerified: boolean;
 }
