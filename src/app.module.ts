@@ -11,6 +11,7 @@ import { NewsPaperModule } from './module/news-paper/news-paper.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { CloudinaryModule } from './core/module/cloudinary/cloudinary.module';
 import { MarketTypeModule } from './module/market-type/market-type.module';
+import { CategoryModule } from './module/category/category.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { MarketTypeModule } from './module/market-type/market-type.module';
     UserModule,
     NewsPaperModule,
     MarketTypeModule,
+    CategoryModule,
   ],
 
   providers: [
