@@ -20,10 +20,15 @@ export class ResponseInterceptor<T> implements NestInterceptor {
     const res = context.switchToHttp().getResponse();
     const statusCode = res.statusCode;
 
+    const { data, tokens, message, pagination } = response;
+
     return {
       sucess: true,
       statusCode,
-      ...response,
+      message,
+      tokens,
+      pagination,
+      data,
     }
   }
 }

@@ -5,7 +5,6 @@ export class ApiResponse<T = any> {
     data?: T;
     tokens?: AuthToken;
     message?: string;
-    user?: User;
     pagination?: { page?: number; length?: number; next?: number; prev?: number };
 
     private constructor(
@@ -20,7 +19,6 @@ export class ApiResponse<T = any> {
         this.data = attributes.data;
         this.tokens = attributes.tokens;
         this.message = attributes.message;
-        this.user = attributes.user;
         this.pagination = attributes.pagination;
     }
 

@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { CryptHelper } from 'src/core/helpers/crypt.helper';
+import { Pagination } from 'src/core/helpers/pagination.helper';
 import { User } from 'src/models/user.entity';
 
 @Injectable()
@@ -10,6 +11,42 @@ export class UserService {
     constructor(
         @InjectModel(User.name) private userModel: Model<User>,
     ) { }
+
+    findAll = async (
+        optinos?: {
+            keyword?: string,
+            fields?: string,
+            sort?: string,
+
+        },
+        paginationOptions?: {
+            limit?: number,
+            page?: number,
+        }
+
+    ) => {
+        const { keyword, fields, sort } = optinos || {};
+
+        const query = this.userModel.find();
+
+        if (keyword) {
+            const reg = new RegExp(keyword, 'i');
+            query.or([{ name: reg }, { email: reg }, { phone: reg }]);
+            console.log(query.getFilter());
+        }
+
+        if (fields) query.select(fields.trim());
+
+        if (sort) query.sort(sort.trim());
+
+        const { generate, limit, skip } = new Pagination(
+            this.userModel,
+            { ...paginationOptions, filter: query.getFilter() }
+        ).getOptions();
+
+        return await generate(await query.limit(limit).skip(skip));
+    }
+
 
     updateUser = async (id: Types.ObjectId, updates?: {
         name?: string,
@@ -23,6 +60,7 @@ export class UserService {
     }) => {
         const { name, email, password, phone, isVerified } = updates || {};
         const { old: oldPassword, new: newPassword } = password || {};
+
 
         const user = await this.findUser(id, { oldPassword });
 
@@ -50,7 +88,7 @@ export class UserService {
     findUser = async (id: Types.ObjectId, options?: {
         oldPassword?: string
     }) => {
-        const { oldPassword } = options;
+        const { oldPassword } = options || {};
 
         const filter: FilterQuery<User> = { _id: id };
 
@@ -65,6 +103,10 @@ export class UserService {
 
         return user;
     }
+
+    deleteUser = async (id: Types.ObjectId) =>
+        await this.userModel.findByIdAndDelete(id);
+
 
     private async checkExist(options: {
         email?: string,

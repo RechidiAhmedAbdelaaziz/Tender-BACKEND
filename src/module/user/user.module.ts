@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { AdminUserController, UserController } from './user.controller';
 import { DatabaseModule } from 'src/core/module/database.module';
 import { User } from 'src/models/user.entity';
 
@@ -8,7 +8,7 @@ import { User } from 'src/models/user.entity';
   imports: [
     DatabaseModule.forFeature([User]),
   ],
-  controllers: [UserController],
+  controllers: [UserController , AdminUserController],
   providers: [UserService],
   exports: [UserService],
 })
