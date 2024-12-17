@@ -10,6 +10,7 @@ import { UserModule } from './module/user/user.module';
 import { NewsPaperModule } from './module/news-paper/news-paper.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { CloudinaryModule } from './core/module/cloudinary/cloudinary.module';
+import { MarketTypeModule } from './module/market-type/market-type.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CloudinaryModule } from './core/module/cloudinary/cloudinary.module';
     AuthModule,
     UserModule,
     NewsPaperModule,
+    MarketTypeModule,
   ],
 
   providers: [
