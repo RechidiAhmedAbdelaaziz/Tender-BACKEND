@@ -32,7 +32,6 @@ export class UserService {
         if (keyword) {
             const reg = new RegExp(keyword, 'i');
             query.or([{ name: reg }, { email: reg }, { phone: reg }]);
-            console.log(query.getFilter());
         }
 
         if (fields) query.select(fields.trim());
