@@ -1,17 +1,16 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { MarketTypeService } from './market-type.service';
-import { ApiResponse } from 'src/core/types/api-response';
+import { ApiResult } from 'src/core/types/api-response';
 import { CreateMarketTypeBodyDto } from './dto/create-markettype.dto';
 import { UpdateMarketTypeParamsDto, UpdateMarketTypeBodyDto } from './dto/update-markettype.dto';
 import { Types } from 'mongoose';
 import { IdParamDto } from 'src/core/shared/dtos/id-param.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UserRoles } from 'src/core/enums/user-roles.enum';
-import { HttpAuthGuard, SetRole } from '../auth/guards/auth.guard';
-
+import { HttpAuthGuard, Role } from '../auth/guards/auth.guard';
+@Role(UserRoles.ADMIN)
 @ApiBearerAuth()
 @UseGuards(HttpAuthGuard)
-@SetRole(UserRoles.ADMIN)
 @Controller('market-type')
 export class MarketTypeController {
   constructor(private readonly marketTypeService: MarketTypeService) { }
@@ -19,11 +18,12 @@ export class MarketTypeController {
   /**
    * GET ALL MARKET TYPES
    */
+  @Role(UserRoles.USER)
   @Get()
   async getAll() {
     const result = await this.marketTypeService.findAll();
 
-    return ApiResponse.success({ data: result });
+    return ApiResult.success({ data: result });
   }
 
   /**
@@ -35,7 +35,7 @@ export class MarketTypeController {
 
     const data = await this.marketTypeService.create({ name });
 
-    return ApiResponse.success({ data });
+    return ApiResult.success({ data });
   }
 
   /**
@@ -51,7 +51,7 @@ export class MarketTypeController {
 
     const data = await this.marketTypeService.update(id, { name });
 
-    return ApiResponse.success({ data });
+    return ApiResult.success({ data });
   }
 
   /**
@@ -63,7 +63,7 @@ export class MarketTypeController {
 
     await this.marketTypeService.delete(id);
 
-    return ApiResponse.success({ message: 'Market type deleted' });
+    return ApiResult.success({ message: 'Market type deleted' });
   }
 
 

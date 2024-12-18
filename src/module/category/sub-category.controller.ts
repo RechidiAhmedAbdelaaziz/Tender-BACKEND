@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { HttpAuthGuard, SetRole } from '../auth/guards/auth.guard';
+import { HttpAuthGuard, Role } from '../auth/guards/auth.guard';
 import { UserRoles } from 'src/core/enums/user-roles.enum';
-import { ApiResponse } from 'src/core/types/api-response';
+import { ApiResult } from 'src/core/types/api-response';
 import { CreateSubCategoryBodyDTO } from './dto/create-category.dto';
 import { UpdateSubCategoryBodyDTO, UpdateSubCategoryParamsDTO } from './dto/update-category';
 import { Types } from 'mongoose';
@@ -13,7 +13,7 @@ import { ListSubCategoryQueryDTO } from './dto/get-category.dto';
 
 @ApiBearerAuth()
 @UseGuards(HttpAuthGuard)
-@SetRole(UserRoles.ADMIN)
+@Role(UserRoles.ADMIN)
 @Controller('sub-category')
 export class SubCategoryController {
     constructor(private readonly categoryService: SubCategoryService) { }
@@ -21,6 +21,7 @@ export class SubCategoryController {
     /**
      * GET ALL SUB-CATEGORIES
      */
+    @Role(UserRoles.USER)
     @Get()
     async getAll(
         @Query() query: ListSubCategoryQueryDTO,
@@ -31,7 +32,7 @@ export class SubCategoryController {
 
         const result = await this.categoryService.findAll(categoryId);
 
-        return ApiResponse.success({ data: result });
+        return ApiResult.success({ data: result });
     }
 
     /**
@@ -46,7 +47,7 @@ export class SubCategoryController {
 
         const data = await this.categoryService.createCategory({ name, categoryId });
 
-        return ApiResponse.success({ data });
+        return ApiResult.success({ data });
     }
 
     /**
@@ -62,7 +63,7 @@ export class SubCategoryController {
 
         const data = await this.categoryService.updateCategory(id, { name });
 
-        return ApiResponse.success({ data });
+        return ApiResult.success({ data });
     }
 
     /**
@@ -74,7 +75,7 @@ export class SubCategoryController {
 
         await this.categoryService.deleteCategory(id);
 
-        return ApiResponse.success({ message: 'Category deleted successfully' });
+        return ApiResult.success({ message: 'Category deleted successfully' });
     }
 
 }

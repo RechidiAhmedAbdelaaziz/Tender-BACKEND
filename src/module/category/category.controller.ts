@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { HttpAuthGuard, SetRole } from '../auth/guards/auth.guard';
+import { HttpAuthGuard, Role } from '../auth/guards/auth.guard';
 import { UserRoles } from 'src/core/enums/user-roles.enum';
-import { ApiResponse } from 'src/core/types/api-response';
+import { ApiResult } from 'src/core/types/api-response';
 import { CreateCategoryBodyDTO } from './dto/create-category.dto';
 import { UpdateCategoryBodyDTO, UpdateCategoryParamsDTO } from './dto/update-category';
 import { Types } from 'mongoose';
@@ -11,7 +11,7 @@ import { IdParamDto } from 'src/core/shared/dtos/id-param.dto';
 
 @ApiBearerAuth()
 @UseGuards(HttpAuthGuard)
-@SetRole(UserRoles.ADMIN)
+@Role(UserRoles.ADMIN)
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
@@ -23,7 +23,7 @@ export class CategoryController {
   async getAll() {
     const result = await this.categoryService.findAll();
 
-    return ApiResponse.success({ data: result });
+    return ApiResult.success({ data: result });
   }
 
   /**
@@ -37,7 +37,7 @@ export class CategoryController {
 
     const data = await this.categoryService.createCategory({ name });
 
-    return ApiResponse.success({ data });
+    return ApiResult.success({ data });
   }
 
   /**
@@ -53,7 +53,7 @@ export class CategoryController {
 
     const data = await this.categoryService.updateCategory(id, { name });
 
-    return ApiResponse.success({ data });
+    return ApiResult.success({ data });
   }
 
   /**
@@ -65,7 +65,7 @@ export class CategoryController {
 
     await this.categoryService.deleteCategory(id);
 
-    return ApiResponse.success({message: 'Category deleted successfully'});
+    return ApiResult.success({ message: 'Category deleted successfully' });
   }
 
 }

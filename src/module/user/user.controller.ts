@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { HttpAuthGuard, SetRole } from '../auth/guards/auth.guard';
+import { HttpAuthGuard, Role } from '../auth/guards/auth.guard';
 import { CurrentUser } from '../auth/decorators/auth.decorator';
 import { Types } from 'mongoose';
 import { UpdateUserBodyDTO } from './dto/update-user.dto';
 import { UserRoles } from 'src/core/enums/user-roles.enum';
 import { ListUsersDto } from './dto/list-users.dto';
-import { ApiResponse } from 'src/core/types/api-response';
+import { ApiResult } from 'src/core/types/api-response';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UserIdParamDto } from './dto/userid-param.dto';
 
@@ -26,7 +26,7 @@ export class UserController {
   ) {
     const { name, email, password, phone } = body;
     const user = await this.userService.updateUser(userId, { name, email, password, phone });
-    return ApiResponse.success({ data: user });
+    return ApiResult.success({ data: user });
   }
 
   /**
@@ -35,7 +35,7 @@ export class UserController {
   @Get()
   async getMe(@CurrentUser() userId: Types.ObjectId) {
     const user = await this.userService.findUser(userId);
-    return ApiResponse.success({ data: user });
+    return ApiResult.success({ data: user });
   }
 
   /**
@@ -44,7 +44,7 @@ export class UserController {
   @Delete()
   async deleteUser(@CurrentUser() userId: Types.ObjectId) {
     await this.userService.deleteUser(userId);
-    return ApiResponse.success({ message: 'User deleted successfully' });
+    return ApiResult.success({ message: 'User deleted successfully' });
   }
 
 
@@ -53,8 +53,8 @@ export class UserController {
 
 @ApiBearerAuth()
 @Controller('user')
+@Role(UserRoles.ADMIN)
 @UseGuards(HttpAuthGuard)
-@SetRole(UserRoles.ADMIN)
 export class AdminUserController {
   constructor(private readonly userService: UserService) { }
 
@@ -67,7 +67,7 @@ export class AdminUserController {
   ) {
     const { page, limit, keyword, fields, sort } = query;
     const result = await this.userService.findAll({ keyword, fields, sort }, { page, limit });
-    return ApiResponse.success(result);
+    return ApiResult.success(result);
   }
 
   /**
@@ -78,7 +78,7 @@ export class AdminUserController {
     const { userId } = params;
 
     await this.userService.deleteUser(new Types.ObjectId(userId));
-    return ApiResponse.success({ message: 'User deleted successfully' });
+    return ApiResult.success({ message: 'User deleted successfully' });
   }
 
 }

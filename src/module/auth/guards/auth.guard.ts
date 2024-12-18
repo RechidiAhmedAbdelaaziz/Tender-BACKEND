@@ -7,10 +7,9 @@ import { isRoleAllowed, UserRoles } from 'src/core/enums/user-roles.enum';
 import { JwtPayload } from 'src/core/types/jwt-payload';
 
 
-const ROLE_GUARD_KEY = 'roleGuard'
 const CHECK_VERIFIED_KEY = 'checkVerified'
 
-export const SetRole = (userRole = UserRoles.USER) => SetMetadata(ROLE_GUARD_KEY, userRole)
+export const Role = Reflector.createDecorator<UserRoles>();
 export const UnCheckVerified = () => SetMetadata(CHECK_VERIFIED_KEY, true)
 @Injectable()
 export class HttpAuthGuard implements CanActivate {
@@ -65,10 +64,14 @@ export class HttpAuthGuard implements CanActivate {
   }
 
   private checkRole(context: ExecutionContext, payload: JwtPayload) {
-    const allowedRole =
-      this.reflector.get<UserRoles>(ROLE_GUARD_KEY, context.getHandler())
-      || UserRoles.USER
+    const allowedRole = this.reflector
+      .getAllAndOverride(Role, [context.getHandler(), context.getClass()]);
 
+
+    console.log('allowedRole', allowedRole)
+    console.log('payload.role', payload.role)
+
+    console.log('isRoleAllowed', isRoleAllowed(payload.role, allowedRole))
     if (!isRoleAllowed(payload.role, allowedRole)) {
       throw new HttpException('You are not allowed to access this resource', 401)
     }

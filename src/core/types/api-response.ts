@@ -1,7 +1,7 @@
 import { User } from "src/models/user.entity";
 import { AuthToken } from "./auth-token";
 
-export class ApiResponse<T = any> {
+export class ApiResult<T = any> {
     data?: T;
     tokens?: AuthToken;
     message?: string;
@@ -32,7 +32,7 @@ export class ApiResponse<T = any> {
         }
 
     ) {
-        return new ApiResponse<T>(attributes);
+        return new ApiResult<T>(attributes);
     }
 
 }

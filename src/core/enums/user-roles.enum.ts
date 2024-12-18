@@ -17,6 +17,8 @@ const getRolePriority = (role: UserRoles): number | undefined => {
 }
 
 export const isRoleAllowed = (userRole: UserRoles, role: UserRoles): boolean => {
+    
+
     const userRolePriority = getRolePriority(userRole);
     const rolePriority = getRolePriority(role);
 

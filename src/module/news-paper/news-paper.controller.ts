@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { NewsPaperService } from './news-paper.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
-import { HttpAuthGuard, SetRole } from '../auth/guards/auth.guard';
+import { HttpAuthGuard, Role } from '../auth/guards/auth.guard';
 import { UserRoles } from 'src/core/enums/user-roles.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateNewspaperDto } from './dto/create-newspaper.dto';
-import { ApiResponse } from 'src/core/types/api-response';
+import { ApiResult } from 'src/core/types/api-response';
 import { PaginationQueryDto } from 'src/core/shared/dtos/pagination.dto';
 import { UpdateNewspaperBodyDto, UpdateNewspaperParamsDto } from './dto/update-newpapper.dto';
 import { Types } from 'mongoose';
@@ -13,7 +13,7 @@ import { IdParamDto } from 'src/core/shared/dtos/id-param.dto';
 
 @ApiBearerAuth()
 @UseGuards(HttpAuthGuard)
-@SetRole(UserRoles.ADMIN)
+@Role(UserRoles.ADMIN)
 @Controller('news-paper')
 export class NewsPaperController {
   constructor(private readonly newsPaperService: NewsPaperService) { }
@@ -32,7 +32,7 @@ export class NewsPaperController {
     const { name } = body;
 
     const data = await this.newsPaperService.create({ image, name });
-    return ApiResponse.success({ data });
+    return ApiResult.success({ data });
 
   }
 
@@ -45,7 +45,7 @@ export class NewsPaperController {
 
     const result = await this.newsPaperService.findAll({ page, limit });
 
-    return ApiResponse.success(result);
+    return ApiResult.success(result);
   }
 
   /**
@@ -65,7 +65,7 @@ export class NewsPaperController {
     const data = await this.newsPaperService
       .update(new Types.ObjectId(id), { image, name });
 
-    return ApiResponse.success({ data });
+    return ApiResult.success({ data });
   }
 
   /**
@@ -75,7 +75,7 @@ export class NewsPaperController {
   async delete(@Param() params: IdParamDto) {
     const { id } = params;
     await this.newsPaperService.delete(new Types.ObjectId(id));
-    return ApiResponse.success({ message: 'News paper deleted successfully' });
+    return ApiResult.success({ message: 'News paper deleted successfully' });
   }
 
 
