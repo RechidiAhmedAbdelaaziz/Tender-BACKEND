@@ -15,6 +15,7 @@ import { CategoryModule } from './module/category/category.module';
 import { AnnouncerModule } from './module/announcer/announcer.module';
 import { TenderModule } from './module/tender/tender.module';
 import { ResultModule } from './module/result/result.module';
+import { AuctionModule } from './module/auction/auction.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ResultModule } from './module/result/result.module';
     AnnouncerModule,
     TenderModule,
     ResultModule,
+    AuctionModule,
   ],
 
   providers: [
