@@ -42,12 +42,13 @@ export class AnnouncerService {
         name: string;
         about: string;
         image: Express.Multer.File;
+        isStartup?: boolean;
     }) => {
-        const { name, about, image } = data;
+        const { name, about, image, isStartup } = data;
 
         await this.checkExistence(name);
 
-        const announcer = new this.announcerModel({ name, about });
+        const announcer = new this.announcerModel({ name, about, isStartup });
 
         const imageUrl = await this.cloudinaryService.uploadImage(image, {
             name: announcer._id.toHexString(),
@@ -63,8 +64,9 @@ export class AnnouncerService {
         name?: string;
         about?: string;
         image?: Express.Multer.File;
+        isStartup?: boolean;
     }) => {
-        const { name, about, image } = data;
+        const { name, about, image , isStartup } = data;
 
         const announcer = await this.getById(id);
 
@@ -82,6 +84,8 @@ export class AnnouncerService {
             });
             announcer.imageUrl = imageUrl;
         }
+
+        if (isStartup !== undefined) announcer.isStartup = isStartup;
 
         if (announcer.isModified()) return await announcer.save();
     }

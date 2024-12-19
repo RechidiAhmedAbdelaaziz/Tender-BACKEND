@@ -28,7 +28,8 @@ export class SubCategoryService {
 
         const category = new this.subCategoryModel({ name: name, category: categoryId });
 
-        return await category.save();
+        await category.save();
+        return await this.getById(category._id);
     }
 
     async updateCategory(id: Types.ObjectId, data: {
@@ -53,7 +54,10 @@ export class SubCategoryService {
     }
 
     async getById(id: Types.ObjectId) {
-        const result = await this.subCategoryModel.findById(id);
+        const result = await this.subCategoryModel
+            .findById(id)
+            .populate('category');
+
         if (!result) throw new HttpException('Category not found', 404);
 
         return result;

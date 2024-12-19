@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsOptional, IsString } from "class-validator";
 
 export class CreateAnnouncerBodyDTO {
     /**
@@ -23,6 +23,15 @@ export class CreateAnnouncerBodyDTO {
     @IsOptional()
     @ApiProperty({ type: 'string', format: 'binary' })
     image: Express.Multer.File;
+
+    /**
+     * Is the announcer a startup
+     * @example false
+     */
+    @IsOptional()
+    @IsBoolean()
+    isStartup?: boolean;
+
 
 }
 

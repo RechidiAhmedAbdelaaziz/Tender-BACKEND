@@ -13,6 +13,7 @@ import { CloudinaryModule } from './core/module/cloudinary/cloudinary.module';
 import { MarketTypeModule } from './module/market-type/market-type.module';
 import { CategoryModule } from './module/category/category.module';
 import { AnnouncerModule } from './module/announcer/announcer.module';
+import { TenderModule } from './module/tender/tender.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AnnouncerModule } from './module/announcer/announcer.module';
     MarketTypeModule,
     CategoryModule,
     AnnouncerModule,
+    TenderModule,
   ],
 
   providers: [
