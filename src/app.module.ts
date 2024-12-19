@@ -14,6 +14,7 @@ import { MarketTypeModule } from './module/market-type/market-type.module';
 import { CategoryModule } from './module/category/category.module';
 import { AnnouncerModule } from './module/announcer/announcer.module';
 import { TenderModule } from './module/tender/tender.module';
+import { ResultModule } from './module/result/result.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TenderModule } from './module/tender/tender.module';
     CategoryModule,
     AnnouncerModule,
     TenderModule,
+    ResultModule,
   ],
 
   providers: [
