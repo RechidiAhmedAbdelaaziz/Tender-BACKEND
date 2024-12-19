@@ -1,4 +1,4 @@
-import { IsString, IsMongoId } from "class-validator";
+import { IsString, IsMongoId, IsDate, IsOptional } from "class-validator";
 
 export class CreateResultBody {
 
@@ -31,4 +31,11 @@ export class CreateResultBody {
      */
     @IsMongoId({ each: true })
     newsPapers: string[];
+
+    /**
+     * Deadline of the result
+     */
+    @IsOptional()
+    @IsDate()
+    deadline: Date;
 }

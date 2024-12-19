@@ -19,6 +19,9 @@ export class Result extends AbstractSchema {
     @Prop()
     type : string;
 
+    @Prop()
+    deadline: Date;
+
     @Prop({ type: Schema.Types.ObjectId, ref: Tender.name })
     tender: Tender;
 
