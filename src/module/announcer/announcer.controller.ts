@@ -44,9 +44,9 @@ export class AnnouncerController {
     @Body() body: CreateAnnouncerBodyDTO,
     @UploadedFile() image: Express.Multer.File
   ) {
-    const { name, about } = body;
+    const { name, about, isStartup } = body;
 
-    const data = await this.announcerService.create({ name, image, about });
+    const data = await this.announcerService.create({ name, image, about, isStartup });
 
     return ApiResult.success({ data });
   }
@@ -62,10 +62,10 @@ export class AnnouncerController {
     @Body() body: UpdateAnnouncerBodyDTO,
     @UploadedFile() image: Express.Multer.File
   ) {
-    const { name, about } = body;
+    const { name, about, isStartup } = body;
     const id = new Types.ObjectId(params.id);
 
-    const data = await this.announcerService.update(id, { name, image, about });
+    const data = await this.announcerService.update(id, { name, image, about, isStartup });
 
     return ApiResult.success({ data });
   }

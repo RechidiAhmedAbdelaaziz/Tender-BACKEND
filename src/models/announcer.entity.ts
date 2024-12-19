@@ -12,4 +12,7 @@ export class Announcer extends AbstractSchema {
 
     @Prop()
     imageUrl: string;
+
+    @Prop({ default: false })
+    isStartup: boolean;
 }
