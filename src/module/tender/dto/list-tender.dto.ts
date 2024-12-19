@@ -25,10 +25,10 @@ export class ListTenderQuery extends PaginationQueryDto {
     announcer?: string;
 
     /**
-     * Select tenders with deadline greater than or equal to this date
+     * Select tenders with greater than or equal to this date
      */
     @IsOptional()
-    deadline?: Date;
+    publishedAt?: Date;
 
     /**
      * Select startup tenders

@@ -99,7 +99,7 @@ export class TenderService {
             category?: Types.ObjectId,
             marketType?: Types.ObjectId,
             announcer?: Types.ObjectId,
-            deadline?: Date
+            publishedAt?: Date,
             startup?: boolean
         },
         options: {
@@ -113,7 +113,7 @@ export class TenderService {
         }
     ) => {
         const { page, limit } = pagination;
-        const { category, marketType, announcer, deadline, startup } = filters;
+        const { category, marketType, announcer, publishedAt, startup } = filters;
         const { keyword, fields, sort } = options;
 
         const filter: FilterQuery<Tender> = {};
@@ -122,7 +122,7 @@ export class TenderService {
         if (category) filter.category = category;
         if (marketType) filter.marketType = marketType;
         if (announcer) filter.announcer = announcer;
-        if (deadline) filter.deadline = { $gte: deadline };
+        if (publishedAt) filter.createdAt = { $gte: publishedAt };
         if (startup !== undefined) filter.isStartup = startup;
 
         const { generate, skip } = new Pagination(this.tenderModel, { page, limit, filter }).getOptions();
@@ -138,6 +138,11 @@ export class TenderService {
         )
     }
 
+    findOne = async (id: Types.ObjectId) => {
+        return await this.tenderModel
+        .findById(id)
+        .populate('announcer category marketType sources.newsPaper');
+    }
 
 
 
