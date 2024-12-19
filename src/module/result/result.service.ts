@@ -17,9 +17,9 @@ export class ResultService {
     ) { }
 
     create = async (data: ResultParams) => {
-        const { title, announcer, type, tender, sources } = data;
+        const { title, announcer, type, tender, sources, deadline } = data;
 
-        const result = new this.resultModel({ title, announcer, type, tender });
+        const result = new this.resultModel({ title, announcer, type, tender, deadline });
 
         const imageUrls = await Promise.all(sources.map(async source => {
             const { images, newsPaper } = source;
@@ -43,7 +43,7 @@ export class ResultService {
     }
 
     update = async (id: Types.ObjectId, data: UpdateResultParams) => {
-        const { title, announcer, type, tender, sources } = data;
+        const { title, announcer, type, tender, sources,deadline } = data;
 
         const result = await this.resultModel.findById(id);
 
@@ -51,6 +51,7 @@ export class ResultService {
         if (announcer) result.announcer._id = announcer;
         if (type) result.type = type;
         if (tender) result.tender._id = tender;
+        if (deadline) result.deadline = deadline;
 
         if (sources) {
             const imageUrls = await Promise.all(sources.map(async source => {
@@ -124,8 +125,8 @@ export class ResultService {
 
     findOne = async (id: Types.ObjectId) => {
         return this.resultModel
-        .findById(id)
-        .populate('announcer tender sources.newsPaper');
+            .findById(id)
+            .populate('announcer tender sources.newsPaper');
     }
 
 

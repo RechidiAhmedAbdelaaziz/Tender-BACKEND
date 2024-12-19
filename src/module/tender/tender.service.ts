@@ -17,7 +17,7 @@ class TenderParams {
         newsPaper: Types.ObjectId;
     }[];
     isStartup: boolean;
-
+    region : string;
 }
 
 class OptionalTenderParams extends PartialType(TenderParams) { }
@@ -30,9 +30,9 @@ export class TenderService {
     ) { }
 
     create = async (data: TenderParams) => {
-        const { title, announcer, category, marketType, deadline, sources, isStartup } = data;
+        const { title, announcer, category, marketType,region, deadline, sources, isStartup } = data;
 
-        const tender = new this.tenderModel({ title, announcer, category, marketType, deadline, isStartup });
+        const tender = new this.tenderModel({ title, announcer,region, category, marketType, deadline, isStartup });
 
         const imageUrls = await Promise.all(sources.map(async source => {
             const { images, newsPaper } = source;
@@ -57,7 +57,7 @@ export class TenderService {
     }
 
     update = async (id: Types.ObjectId, data: OptionalTenderParams) => {
-        const { title, announcer, category, marketType, deadline, sources, isStartup } = data;
+        const { title, announcer, category, marketType, deadline, sources, isStartup,region } = data;
 
         const tender = await this.tenderModel.findById(id);
 
@@ -67,6 +67,7 @@ export class TenderService {
         if (marketType) tender.marketType._id = marketType;
         if (deadline) tender.deadline = deadline;
         if (isStartup !== undefined) tender.isStartup = isStartup;
+        if (region) tender.region = region;
 
         if (sources) {
             const imageUrls = await Promise.all(sources.map(async source => {

@@ -1,11 +1,9 @@
 import { PartialType } from "@nestjs/swagger";
 import { Types } from "mongoose";
 
-export class ResultParams {
+export class AuctionParams {
     title: string;
-    announcer: Types.ObjectId;
     type: string;
-    tender: Types.ObjectId;
     deadline: Date;
     sources: {
         images: Express.Multer.File[];
@@ -13,6 +11,6 @@ export class ResultParams {
     }[];
 }
 
-export class UpdateResultParams extends PartialType(ResultParams) {
+export class OptionalAuctionParams extends PartialType(AuctionParams) {
 
 }

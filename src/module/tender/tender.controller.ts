@@ -30,7 +30,7 @@ export class TenderController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
 
-    const { title, isStartup } = body;
+    const { title, isStartup, region } = body;
 
     const announcer = new Types.ObjectId(body.announcer);
     const category = new Types.ObjectId(body.category);
@@ -50,6 +50,7 @@ export class TenderController {
       marketType,
       deadline,
       sources,
+      region,
     });
 
     return ApiResult.success({ data: tender });
@@ -67,7 +68,7 @@ export class TenderController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
 
-    const { title, isStartup } = body;
+    const { title, isStartup, region } = body;
 
     const announcer = new Types.ObjectId(body.announcer);
     const category = new Types.ObjectId(body.category);
@@ -88,6 +89,7 @@ export class TenderController {
         marketType,
         deadline,
         sources,
+        region,
       });
 
     return ApiResult.success({ data: tender });
