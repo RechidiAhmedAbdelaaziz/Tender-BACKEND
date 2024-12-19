@@ -24,7 +24,7 @@ export class ResultController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
 
-    const { title, type } = body;
+    const { title, type ,deadline} = body;
 
     const announcer = new Types.ObjectId(body.announcer);
     const tender = new Types.ObjectId(body.tender);
@@ -39,6 +39,7 @@ export class ResultController {
       tender,
       type,
       sources,
+      deadline
     });
 
     return ApiResult.success({ data: result });
@@ -56,7 +57,7 @@ export class ResultController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
 
-    const { title, type } = body;
+    const { title, type ,deadline} = body;
 
     const announcer = new Types.ObjectId(body.announcer);
     const tender = new Types.ObjectId(body.tender);
@@ -73,6 +74,7 @@ export class ResultController {
         tender,
         type,
         sources,
+        deadline,
       }
     );
 

@@ -68,6 +68,12 @@ export class CreateTenderBody {
     @IsBoolean()
     isStartup?: boolean;
 
+    /**
+     * Region of the tender
+     */
+    @IsString()
+    region: string;
+
 }
 
 

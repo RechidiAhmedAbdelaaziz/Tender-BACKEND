@@ -26,6 +26,9 @@ export class Tender extends AbstractSchema {
     @Prop()
     deadline: Date;
 
+    @Prop()
+    region: string;
+
     @Prop({
         type: [{
             imageUrls: [String],
