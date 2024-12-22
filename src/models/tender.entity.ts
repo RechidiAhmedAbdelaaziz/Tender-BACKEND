@@ -24,6 +24,9 @@ export class Tender extends AbstractSchema {
     marketType: MarketType;
 
     @Prop()
+    publicationDate: Date;
+
+    @Prop()
     deadline: Date;
 
     @Prop()

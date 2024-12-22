@@ -12,12 +12,14 @@ class TenderParams {
     category: Types.ObjectId;
     marketType: Types.ObjectId;
     deadline: Date;
+    publicationDate: Date;
     sources: {
         images: Express.Multer.File[];
         newsPaper: Types.ObjectId;
     }[];
     isStartup: boolean;
-    region : string;
+    region: string;
+
 }
 
 class OptionalTenderParams extends PartialType(TenderParams) { }
@@ -30,9 +32,9 @@ export class TenderService {
     ) { }
 
     create = async (data: TenderParams) => {
-        const { title, announcer, category, marketType,region, deadline, sources, isStartup } = data;
+        const { title, announcer, category, publicationDate, marketType, region, deadline, sources, isStartup } = data;
 
-        const tender = new this.tenderModel({ title, announcer,region, category, marketType, deadline, isStartup });
+        const tender = new this.tenderModel({ title, announcer, region, publicationDate, category, marketType, deadline, isStartup });
 
         const imageUrls = await Promise.all(sources.map(async source => {
             const { images, newsPaper } = source;
@@ -57,7 +59,7 @@ export class TenderService {
     }
 
     update = async (id: Types.ObjectId, data: OptionalTenderParams) => {
-        const { title, announcer, category, marketType, deadline, sources, isStartup,region } = data;
+        const { title, announcer, category, publicationDate, marketType, deadline, sources, isStartup, region } = data;
 
         const tender = await this.tenderModel.findById(id);
 
@@ -68,6 +70,8 @@ export class TenderService {
         if (deadline) tender.deadline = deadline;
         if (isStartup !== undefined) tender.isStartup = isStartup;
         if (region) tender.region = region;
+        if (publicationDate) tender.publicationDate = publicationDate;
+
 
         if (sources) {
             const imageUrls = await Promise.all(sources.map(async source => {
@@ -141,8 +145,8 @@ export class TenderService {
 
     findOne = async (id: Types.ObjectId) => {
         return await this.tenderModel
-        .findById(id)
-        .populate('announcer category marketType sources.newsPaper');
+            .findById(id)
+            .populate('announcer category marketType sources.newsPaper');
     }
 
 

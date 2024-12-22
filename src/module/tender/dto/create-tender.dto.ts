@@ -74,6 +74,12 @@ export class CreateTenderBody {
     @IsString()
     region: string;
 
+    /**
+     * Publication date of the tender (ISO 8601)
+     */
+    @IsDateString()
+    publicationDate: string;
+
 }
 
 

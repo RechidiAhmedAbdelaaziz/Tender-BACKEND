@@ -36,6 +36,7 @@ export class TenderController {
     const category = new Types.ObjectId(body.category);
     const marketType = new Types.ObjectId(body.marketType);
     const deadline = new Date(body.deadline);
+    const publicationDate = new Date(body.publicationDate);
     const sources = body.sources.map(source => ({ //* Show POSTMAN
       images: files.filter(image => image.fieldname === `sources[${body.sources.indexOf(source)}][images]`),
       newsPaper: new Types.ObjectId(source.newsPaper),
@@ -43,6 +44,7 @@ export class TenderController {
 
 
     const tender = await this.tenderService.create({
+      publicationDate,
       isStartup,
       title,
       announcer,
@@ -74,6 +76,7 @@ export class TenderController {
     const category = new Types.ObjectId(body.category);
     const marketType = new Types.ObjectId(body.marketType);
     const deadline = new Date(body.deadline);
+    const publicationDate = new Date(body.publicationDate);
     const sources = body.sources.map(source => ({ //* Show POSTMAN
       images: files.filter(image => image.fieldname === `sources[${body.sources.indexOf(source)}][images]`),
       newsPaper: new Types.ObjectId(source.newsPaper),
@@ -82,6 +85,7 @@ export class TenderController {
     const tender = await this.tenderService.update(
       new Types.ObjectId(params.id),
       {
+        publicationDate,
         isStartup,
         title,
         announcer,
