@@ -7,6 +7,8 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './core/interceptors/response.interceptor';
 import { HttpExceptionFilter } from './core/interceptors/http-exception.filter';
 import { UserModule } from './module/user/user.module';
+import { TenderModule } from './module/tender/tender.module';
+import { AnnouncerModule } from './module/announcer/announcer.module';
 
 
 
@@ -16,6 +18,8 @@ import { UserModule } from './module/user/user.module';
     JwtAuthModule.register(),
     AuthModule,
     UserModule,
+    TenderModule,
+    AnnouncerModule,
   ],
 
   providers: [
