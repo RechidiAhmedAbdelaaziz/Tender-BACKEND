@@ -25,6 +25,14 @@ services:
   tenderdb:
     image: mongo
     container_name: TenderDB
+    attach: false
     ports:
       - "27017:27017"
-    attach: false
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin     # Replace 'admin' with your desired username
+      MONGO_INITDB_ROOT_PASSWORD: password # Replace 'password' with your desired password
+    volumes:
+      - ./.data/db:/data/db
+
+
+

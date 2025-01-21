@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from "class-validator";
 
-export class FindQueryDto {
+export class FindQuery {
     /**
      * The keyword to search for
      * @example 'Ahmed'

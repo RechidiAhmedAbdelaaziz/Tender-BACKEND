@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginBodyDto } from './dto/login.dto';
 import { ApiResult } from 'src/core/types/api-response';
@@ -20,12 +20,12 @@ export class AuthController {
   @Post('login')
   async login(
     @Body() body: LoginBodyDto
-  ) {
+  ): Promise<ApiResult> {
     const { login, password } = body;
 
     const tokens = await this.authService.login({ login, password });
 
-    return ApiResult.success({ tokens });
+    return { tokens, message: 'Login successfully' };
   }
 
   @Post('register')
@@ -36,18 +36,18 @@ export class AuthController {
 
     const tokens = await this.authService.register({ email, phone, password, name });
 
-    return ApiResult.success({ tokens });
+    return { tokens, message: 'Register successfully' };
   }
 
   @Get('refresh-token')
   async refreshToken(
-    @Body() body: RefreshTokenQueryDto
+    @Query() query: RefreshTokenQueryDto
   ) {
-    const { refreshToken } = body;
+    const { refreshToken } = query;
 
     const tokens = await this.authService.refreshToken(refreshToken);
 
-    return ApiResult.success({ tokens });
+    return { tokens, message: 'Refresh token successfully' };
   }
 
   @Post('forgot-password')
@@ -58,7 +58,7 @@ export class AuthController {
 
     await this.authService.forgotPassword(email);
 
-    return ApiResult.success({ message: 'Reset code sent successfully' });
+    return { message: 'Reset code sent successfully' };
   }
 
   @Post('check-reset-code')
@@ -69,7 +69,7 @@ export class AuthController {
 
     await this.authService.verifyRestPasswordOtp(email, otp);
 
-    return ApiResult.success({ message: 'Reset code is correct' });
+    return { message: 'Reset code verified successfully' };
   }
 
   @Post('reset-password')
@@ -80,7 +80,7 @@ export class AuthController {
 
     const tokens = await this.authService.resetPassword(email, otp, password);
 
-    return ApiResult.success({ tokens });
+    return { tokens, message: 'Password reset successfully' };
   }
 
   @ApiBearerAuth()
@@ -92,7 +92,7 @@ export class AuthController {
   ) {
     await this.authService.generateAccountVerificationOtp(userId);
 
-    return ApiResult.success({ message: 'Verification code sent successfully' });
+    return { message: 'Verification code sent successfully' };
   }
 
   @ApiBearerAuth()
@@ -107,7 +107,7 @@ export class AuthController {
 
     const tokens = await this.authService.verifyAccount(userId, otp);
 
-    return ApiResult.success({ tokens });
+    return { tokens, message: 'Account verified successfully' };
   }
 
 

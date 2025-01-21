@@ -2,7 +2,7 @@
 
 import { Schema as DSchema, Prop } from "@nestjs/mongoose";
 import { Schema } from "mongoose";
-import { AbstractSchema } from "./abstract-schema";
+import { AbstractSchema } from "../core/models/abstract-schema";
 import { User } from "./user.entity";
 
 

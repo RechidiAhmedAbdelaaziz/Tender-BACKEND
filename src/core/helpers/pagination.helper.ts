@@ -1,55 +1,76 @@
-import { IsNumber, IsNumberString, IsOptional } from "class-validator";
-import { FilterQuery, Model } from "mongoose";
+import { FilterQuery, Model, PipelineStage, PopulateOptions, ProjectionType, QueryOptions } from 'mongoose';
+import { PaginationArg } from '../shared/args/pagination.arg';
 
 
-
-export class Pagination<T> {
-    constructor(
-        private readonly model: Model<T>,
-        private readonly options?: {
-            page?: number;
-            limit?: number;
-            filter?: FilterQuery<T>
-        }
-
-    ) { }
-
-    getOptions() {
-
-        const page = this.options.page || 1;
-        const limit = this.options.limit || 10;
-        return {
-            skip : (page - 1) * limit,
-            limit,
-            generate: async (list: T[]) => {
-                const total = await this.model.countDocuments(this.options.filter || {});
-                return this.generate(list, { page, limit, total });
-            }
-        }
-
-    }
-
-    private async generate<T>(
-        list: T[], 
-        options: { page: number, limit: number, total: number }
+export abstract class PaginationHelper {
+    /**
+     * Pagination using the `find` method
+     */
+    static async paginateWithFind<T>(
+        model: Model<T>,
+        paginationDto: PaginationArg,
+        filter: FilterQuery<T> = {},
+        projection?: ProjectionType<T>,
+        options?: QueryOptions<T>,
+        populate?: PopulateOptions | (string | PopulateOptions)[],
     ) {
+        const { page = 1, limit = 10 } = paginationDto;
+        const skip = (page - 1) * limit;
 
-        const { page, limit, total } = options;
+        const [data, total] = await Promise.all([
+            model.find(filter, projection, { ...options, skip, limit }).populate(populate).exec(),
+            model.countDocuments(filter).exec(),
+        ]);
 
         const currentPage = Math.min(page, Math.ceil(total / limit)) || 0;
 
-        const next = total > currentPage * limit ? currentPage + 1 : undefined
-        const prev = currentPage > 1 ? currentPage - 1 : undefined
+        return {
+            data,
+            pagination: {
+                page: currentPage,
+                length: data.length,
+                next: total > currentPage * limit ? currentPage + 1 : undefined,
+                prev: currentPage > 1 ? currentPage - 1 : undefined
+            },
+        };
+    }
+
+    /**
+     * Pagination using the `aggregate` method
+     */
+    static async paginateWithAggregation<T>(
+        model: Model<T>,
+        paginationDto: PaginationArg,
+        pipeline: PipelineStage[] = [],
+    ) {
+        const { page = 1, limit = 10 } = paginationDto;
+        const skip = (page - 1) * limit;
+
+        const paginatedPipeline = [...pipeline];
+
+        // Add pagination stages
+        paginatedPipeline.push(
+            { $skip: skip },
+            { $limit: limit },
+        );
+
+        const [data, total] = await Promise.all([
+            model.aggregate(paginatedPipeline).exec(),
+            model.aggregate([...pipeline, { $count: 'total' }]).exec(),
+        ]);
+
+        const totalCount = total.length > 0 ? total[0].total : 0;
+
+        const currentPage = Math.min(page, Math.ceil(totalCount / limit)) || 0;
 
         return {
+            data,
             pagination: {
-                page: currentPage || 0,
-                length: list.length,
-                total,
-                next,
-                prev
+                page: currentPage,
+                length: data.length,
+                next: totalCount > currentPage * limit ? currentPage + 1 : undefined,
+                prev: currentPage > 1 ? currentPage - 1 : undefined
             },
-            data: list
-        }
+        };
     }
 }

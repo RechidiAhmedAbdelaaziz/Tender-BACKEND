@@ -2,48 +2,37 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { CryptHelper } from 'src/core/helpers/crypt.helper';
-import { Pagination } from 'src/core/helpers/pagination.helper';
+import { MongoRepository } from 'src/core/helpers/mongo.helper';
+import { FilterArg, PaginationArg } from 'src/core/shared/args/pagination.arg';
 import { User } from 'src/models/user.entity';
 
 @Injectable()
 export class UserService {
-
+    private userRepo: MongoRepository<User>;
     constructor(
         @InjectModel(User.name) private userModel: Model<User>,
-    ) { }
+    ) {
+        this.userRepo = new MongoRepository(this.userModel);
+    }
 
     findAll = async (
-        optinos?: {
-            keyword?: string,
-            fields?: string,
-            sort?: string,
-
-        },
-        paginationOptions?: {
-            limit?: number,
-            page?: number,
-        }
+        filters: FilterArg,
+        paginationArg?: PaginationArg,
 
     ) => {
-        const { keyword, fields, sort } = optinos || {};
 
-        const query = this.userModel.find();
+        const { keyword, fields, sort } = filters;
 
-        if (keyword) {
-            const reg = new RegExp(keyword, 'i');
-            query.or([{ name: reg }, { email: reg }, { phone: reg }]);
-        }
+        const result = await this.userRepo.findWithPagination(
+            {
+                filter: { name: { $regex: keyword, $options: 'i' } },
+                options: { sort: { [sort || 'createdAt']: -1 }, fields },
 
-        if (fields) query.select(fields.trim());
+            },
+            paginationArg,
+        );
 
-        if (sort) query.sort(sort.trim());
-
-        const { generate, limit, skip } = new Pagination(
-            this.userModel,
-            { ...paginationOptions, filter: query.getFilter() }
-        ).getOptions();
-
-        return await generate(await query.limit(limit).skip(skip));
+        return result;
     }
 
 

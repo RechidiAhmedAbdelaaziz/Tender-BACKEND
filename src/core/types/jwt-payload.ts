@@ -7,11 +7,13 @@ export class JwtPayload {
     id: Types.ObjectId;
     role: UserRoles;
     isVerified: boolean;
+    industries?: string[];
 
     constructor(user: User) {
         this.id = user._id;
         this.role = user.role;
         this.isVerified = user.isVerified;
+        this.industries = user.industries;
     }
 
     // toPlainObject for jwt payload
@@ -19,7 +21,8 @@ export class JwtPayload {
         return {
             id: this.id,
             role: this.role,
-            isVerified: this.isVerified
+            isVerified: this.isVerified,
+            industries: this.industries,
         }
     }
 

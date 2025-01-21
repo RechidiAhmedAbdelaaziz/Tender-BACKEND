@@ -1,7 +1,7 @@
 import { IsInt, IsOptional, Min } from "class-validator";
-import { FindQueryDto } from "./find.dto";
+import { FindQuery } from "./find.dto";
 
-export class PaginationQueryDto extends FindQueryDto {
+export class PaginationQuery extends FindQuery {
     /**
      * The page number
      * @example 1

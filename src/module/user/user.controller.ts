@@ -26,7 +26,7 @@ export class UserController {
   ) {
     const { name, email, password, phone } = body;
     const user = await this.userService.updateUser(userId, { name, email, password, phone });
-    return ApiResult.success({ data: user });
+    return { data: user };
   }
 
   /**
@@ -35,7 +35,7 @@ export class UserController {
   @Get()
   async getMe(@CurrentUser() userId: Types.ObjectId) {
     const user = await this.userService.findUser(userId);
-    return ApiResult.success({ data: user });
+    return { data: user };
   }
 
   /**
@@ -44,7 +44,7 @@ export class UserController {
   @Delete()
   async deleteUser(@CurrentUser() userId: Types.ObjectId) {
     await this.userService.deleteUser(userId);
-    return ApiResult.success({ message: 'User deleted successfully' });
+    return { message: 'User deleted' };
   }
 
 
@@ -64,10 +64,10 @@ export class AdminUserController {
   @Get()
   async getAllUsers(
     @Query() query: ListUsersDto
-  ) {
+  ): Promise<ApiResult> {
     const { page, limit, keyword, fields, sort } = query;
     const result = await this.userService.findAll({ keyword, fields, sort }, { page, limit });
-    return ApiResult.success(result);
+    return { data: result };
   }
 
   /**
@@ -78,7 +78,7 @@ export class AdminUserController {
     const { userId } = params;
 
     await this.userService.deleteUser(new Types.ObjectId(userId));
-    return ApiResult.success({ message: 'User deleted successfully' });
+    return
   }
 
 }

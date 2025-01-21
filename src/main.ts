@@ -21,6 +21,12 @@ async function bootstrap() {
   //   credentials: true, // If you need to allow credentials (cookies, authorization headers)
   // });
 
+  app.enableCors({
+    origin: 'http://localhost:8000/',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // If you need to allow credentials (cookies, authorization headers)
+  });
+
   /**
    * Swagger configuration
    */
@@ -37,6 +43,9 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, documentFactory, {
     customCssUrl: "https://cdn.jsdelivr.net/gh/ajatkj/swagger-ui-improved-theme/css/swagger-ui-improved.css"
   });
+
+
+
 
 
 

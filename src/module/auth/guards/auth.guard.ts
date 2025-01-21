@@ -67,11 +67,6 @@ export class HttpAuthGuard implements CanActivate {
     const allowedRole = this.reflector
       .getAllAndOverride(Role, [context.getHandler(), context.getClass()]);
 
-
-    console.log('allowedRole', allowedRole)
-    console.log('payload.role', payload.role)
-
-    console.log('isRoleAllowed', isRoleAllowed(payload.role, allowedRole))
     if (!isRoleAllowed(payload.role, allowedRole)) {
       throw new HttpException('You are not allowed to access this resource', 401)
     }

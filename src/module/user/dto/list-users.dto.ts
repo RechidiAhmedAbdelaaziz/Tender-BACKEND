@@ -1,4 +1,4 @@
-import { PaginationQueryDto } from "src/core/shared/dtos/pagination.dto";
+import { PaginationQuery } from "src/core/shared/dtos/pagination.dto";
 
-export class ListUsersDto extends PaginationQueryDto {
+export class ListUsersDto extends PaginationQuery {
 }

@@ -81,7 +81,7 @@ export class AuthService {
             findOne({ token: refreshToken, expires: { $gte: new Date() } })
             .populate({
                 path: 'user',
-                select: '_id'
+                select: this.DEFFAULT_SELECT
             });
 
         if (!token) {
@@ -127,12 +127,13 @@ export class AuthService {
 
     verifyAccount = async (id: Types.ObjectId, otp: number) => {
         const token = await this.verifyAccountOtp(id, otp);
-        await Promise.all([
-            await this.userServise.updateUser(id, { isVerified: true }),
-            await token.deleteOne(),
-        ]);
 
-        const user = await this.userModel.findById(id).select(this.DEFFAULT_SELECT);
+
+        await token.deleteOne();
+
+
+        const user = await this.userModel.findByIdAndUpdate(id, { isVerified: true }, { new: true })
+            .select(this.DEFFAULT_SELECT);
 
         return this.generateToken(user);
     }

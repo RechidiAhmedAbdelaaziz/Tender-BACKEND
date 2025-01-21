@@ -7,15 +7,8 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './core/interceptors/response.interceptor';
 import { HttpExceptionFilter } from './core/interceptors/http-exception.filter';
 import { UserModule } from './module/user/user.module';
-import { NewsPaperModule } from './module/news-paper/news-paper.module';
-import { MulterModule } from '@nestjs/platform-express';
-import { CloudinaryModule } from './core/module/cloudinary/cloudinary.module';
-import { MarketTypeModule } from './module/market-type/market-type.module';
-import { CategoryModule } from './module/category/category.module';
-import { AnnouncerModule } from './module/announcer/announcer.module';
-import { TenderModule } from './module/tender/tender.module';
-import { ResultModule } from './module/result/result.module';
-import { AuctionModule } from './module/auction/auction.module';
+
+
 
 @Module({
   imports: [
@@ -23,13 +16,6 @@ import { AuctionModule } from './module/auction/auction.module';
     JwtAuthModule.register(),
     AuthModule,
     UserModule,
-    NewsPaperModule,
-    MarketTypeModule,
-    CategoryModule,
-    AnnouncerModule,
-    TenderModule,
-    ResultModule,
-    AuctionModule,
   ],
 
   providers: [

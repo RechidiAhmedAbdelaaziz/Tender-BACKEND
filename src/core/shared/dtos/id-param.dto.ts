@@ -1,6 +1,6 @@
 import { IsMongoId } from "class-validator";
 
-export class IdParamDto {
+export class IdParams {
     /**
      * ID of the entity
      * @example 1

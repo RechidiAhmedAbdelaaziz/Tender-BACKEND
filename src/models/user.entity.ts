@@ -1,6 +1,7 @@
 import { Schema as KScheam, Prop } from "@nestjs/mongoose";
-import { AbstractSchema } from "./abstract-schema";
+import { AbstractSchema } from "../core/models/abstract-schema";
 import { UserRoles } from "../core/enums/user-roles.enum";
+import { AccountTypes } from "src/core/enums/account-types.enum";
 
 
 
@@ -25,4 +26,10 @@ export class User extends AbstractSchema {
 
     @Prop({ default: false })
     isVerified: boolean;
+
+    @Prop()
+    industries?: string[];
+
+    @Prop({ default: AccountTypes.freeTrial })
+    accountType: AccountTypes
 }
