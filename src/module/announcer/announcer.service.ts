@@ -5,7 +5,7 @@ import { MongoRepository } from 'src/core/helpers/mongo.helper';
 import { Announcer } from 'src/models/announcer.entity';
 import { CreateAnnouncerArgs } from './args/create-announcer.args';
 import { UpdateAnnouncerArgs } from './args/update-announcer.args';
-import { FilterArg, PaginationArg } from 'src/core/shared/args/pagination.arg';
+import { FilterArgs, PaginationArg } from 'src/core/shared/args/pagination.arg';
 
 @Injectable()
 export class AnnouncerService {
@@ -28,7 +28,7 @@ export class AnnouncerService {
     }
 
     async getAnnouncers(
-        filters: FilterArg,
+        filters: FilterArgs,
         paginationArg?: PaginationArg,
     ) {
         const { keyword, fields, sort } = filters || {};

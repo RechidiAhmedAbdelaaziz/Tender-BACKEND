@@ -1,6 +1,6 @@
 import { IsString, IsUrl } from "class-validator";
 
-export class CreateAnnouncerBody {
+export class CreateNewsPaperBody {
     /**
      * Name of the announcer
      * @example John Doe
@@ -14,12 +14,6 @@ export class CreateAnnouncerBody {
      */
     @IsUrl()
     imageUri: string;
-
-    /**
-     * Is the announcer a startup?
-     * @example true
-     */
-    isStartup: boolean;
     
 
 }

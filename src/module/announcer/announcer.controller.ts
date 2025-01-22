@@ -38,9 +38,9 @@ export class AnnouncerController {
   async createAnnouncer(
     @Body() body: CreateAnnouncerBody,
   ): Promise<ApiResult> {
-    const { name, imageUri } = body;
+    const { name, imageUri, isStartup } = body;
 
-    const announcer = await this.announcerService.createAnnouncer({ name, imageUri });
+    const announcer = await this.announcerService.createAnnouncer({ name, imageUri, isStartup });
 
     return { data: announcer };
   }
@@ -51,9 +51,9 @@ export class AnnouncerController {
     @Body() body: UpdateAnnouncerBody,
   ): Promise<ApiResult> {
     const { id } = params;
-    const { name, imageUri } = body;
+    const { name, imageUri, isStartup } = body;
 
-    const announcer = await this.announcerService.updateAnnouncer({ id, name, imageUri });
+    const announcer = await this.announcerService.updateAnnouncer({ id, name, imageUri, isStartup });
 
     return { data: announcer };
   }

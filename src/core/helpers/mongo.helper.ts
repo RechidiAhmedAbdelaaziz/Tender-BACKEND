@@ -1,10 +1,11 @@
 import { FilterQuery, Model, ProjectionType, QueryOptions, UpdateQuery, PopulateOptions, PipelineStage } from 'mongoose';
 import { PaginationArg } from '../shared/args/pagination.arg';
 import { PaginationHelper } from './pagination.helper';
+import { HttpException } from '@nestjs/common';
 
 type TPopulate = PopulateOptions | (string | PopulateOptions)[];
 
-export class MongoRepository<T> {
+export class MongoRepository<T, CreateArg = unknown> {
   constructor(private readonly model: Model<T>) {
 
   }
@@ -35,20 +36,24 @@ export class MongoRepository<T> {
     projection?: ProjectionType<T>,
     options?: QueryOptions,
     populate?: TPopulate,
-  ): Promise<T | null> {
+  ): Promise<T> {
     const query = this.model.findOne(filter, projection, options);
 
     if (populate) {
       query.populate(populate);
     }
 
-    return query.exec();
+    const doc = query.exec();
+
+    if (!doc) throw new HttpException(`${this.model.modelName} not found`, 404);
+
+    return doc;
   }
 
   /**
    * Create a new document.
    */
-  async create(doc: Partial<T>) {
+  async create(doc: CreateArg) {
     const createdDoc = new this.model(doc);
     return createdDoc.save();
   }

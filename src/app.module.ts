@@ -9,6 +9,7 @@ import { HttpExceptionFilter } from './core/interceptors/http-exception.filter';
 import { UserModule } from './module/user/user.module';
 import { TenderModule } from './module/tender/tender.module';
 import { AnnouncerModule } from './module/announcer/announcer.module';
+import { NewsPaperModule } from './module/news-paper/news-paper.module';
 
 
 
@@ -20,6 +21,7 @@ import { AnnouncerModule } from './module/announcer/announcer.module';
     UserModule,
     TenderModule,
     AnnouncerModule,
+    NewsPaperModule,
   ],
 
   providers: [
