@@ -1,8 +1,8 @@
 import { Schema as KScheam, Prop } from "@nestjs/mongoose";
 import { AbstractSchema } from "../core/models/abstract-schema";
 import { Schema } from "mongoose";
-import { Announcer } from "./announcer.entity";
 import { NewsPaper } from "./news-paper";
+import { Tender } from "./tender.entity";
 
 
 
@@ -10,30 +10,21 @@ import { NewsPaper } from "./news-paper";
 @KScheam({
     timestamps: true,
 })
-export class Tender extends AbstractSchema {
+export class TenderResult extends AbstractSchema {
     @Prop()
     title: string;
-
-    @Prop({ type: Schema.Types.ObjectId, ref: Announcer.name })
-    announcer: Announcer;
 
     @Prop()
     publishedDate: Date;
 
     @Prop()
-    closingDate: Date;
-
-    @Prop()
-    chargePrice?: number;
-
-    @Prop()
-    marketType : string;
-
-    @Prop()
-    industry : string;
+    type : string;
 
     @Prop()
     region : string;
+
+    @Prop({ type: Schema.Types.ObjectId, ref: Tender.name })
+    tender: Tender;
 
     @Prop({
         type: [{

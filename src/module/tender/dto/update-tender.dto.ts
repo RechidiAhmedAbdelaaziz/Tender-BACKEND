@@ -31,6 +31,10 @@ class SourceDTO {
 
 export class UpdateTenderBody extends PartialType(OmitType(CreateTenderBody, ['sources'] as const)) {
 
+    /**
+     * The sources of the tender
+     */
+    @IsOptional()
     @ValidateNested({ each: true })
     @Type(() => SourceDTO)
     sources?: SourceDTO[];

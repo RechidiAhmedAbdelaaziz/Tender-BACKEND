@@ -10,6 +10,7 @@ import { UserModule } from './module/user/user.module';
 import { TenderModule } from './module/tender/tender.module';
 import { AnnouncerModule } from './module/announcer/announcer.module';
 import { NewsPaperModule } from './module/news-paper/news-paper.module';
+import { TenderResultModule } from './module/tender-result/tender-result.module';
 
 
 
@@ -22,6 +23,7 @@ import { NewsPaperModule } from './module/news-paper/news-paper.module';
     TenderModule,
     AnnouncerModule,
     NewsPaperModule,
+    TenderResultModule,
   ],
 
   providers: [
