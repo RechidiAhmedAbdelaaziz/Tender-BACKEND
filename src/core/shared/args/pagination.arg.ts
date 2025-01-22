@@ -5,7 +5,7 @@ export interface PaginationArg {
 
 }
 
-export interface FilterArg {
+export interface FilterArgs {
     keyword: string;
     fields: string;
     sort: string;

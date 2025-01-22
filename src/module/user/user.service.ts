@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { CryptHelper } from 'src/core/helpers/crypt.helper';
 import { MongoRepository } from 'src/core/helpers/mongo.helper';
-import { FilterArg, PaginationArg } from 'src/core/shared/args/pagination.arg';
+import { FilterArgs, PaginationArg } from 'src/core/shared/args/pagination.arg';
 import { User } from 'src/models/user.entity';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class UserService {
     }
 
     findAll = async (
-        filters: FilterArg,
+        filters: FilterArgs,
         paginationArg?: PaginationArg,
 
     ) => {

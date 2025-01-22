@@ -1,4 +1,5 @@
 import { IsMongoId } from "class-validator";
+import { Types } from "mongoose";
 
 export class IdParams {
     /**
@@ -6,5 +7,5 @@ export class IdParams {
      * @example 1
      */
     @IsMongoId()
-    id: string;
+    id: Types.ObjectId;
 }

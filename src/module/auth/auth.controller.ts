@@ -17,7 +17,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
 
-  @Post('login')
+  @Post('login') //* AUTH | Login ~ {{host}}/auth/login
   async login(
     @Body() body: LoginBodyDto
   ): Promise<ApiResult> {
