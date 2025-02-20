@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { MongoRepository } from 'src/core/helpers/mongo.helper';
 import { Announcer } from 'src/models/announcer.entity';
 import { CreateAnnouncerArgs } from './args/create-announcer.args';
@@ -33,8 +33,12 @@ export class AnnouncerService {
     ) {
         const { keyword, fields, sort } = filters || {};
 
+        const filterQuery: FilterQuery<Announcer> = {};
+
+        if (keyword) filterQuery.name = { $regex: keyword, $options: 'i' };
+
         return this.announcerRepo.findWithPagination({
-            filter: { name: { $regex: keyword, $options: 'i' } },
+            filter: filterQuery,
             options: { sort: { [sort || 'createdAt']: -1 }, fields },
         }, paginationArg);
     }

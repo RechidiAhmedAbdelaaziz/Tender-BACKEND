@@ -5,7 +5,6 @@ import { MongoRepository } from 'src/core/helpers/mongo.helper';
 import { Tender } from 'src/models/tender.entity';
 import { TenderFilterArgs } from './args/tender-filter.args';
 import { FilterArgs, PaginationArg } from 'src/core/shared/args/pagination.arg';
-import { title } from 'process';
 import { CreateTenderArg, UpdateTenderArg } from './args/tender-details';
 
 @Injectable()
@@ -24,6 +23,19 @@ export class TenderService {
     ) {
         const { keyword, fields, sort } = filters;
         const { announcer, closingBefore, industries, isStartup, marketType, publishedAfter, regions } = tenderFilter;
+
+
+        const filter: any = [];
+
+        if (keyword) filter.push({ title: { $regex: keyword, $options: 'i' } });
+        if (announcer) filter.push({ 'announcer._id': new Types.ObjectId(announcer) });
+        if (publishedAfter) filter.push({ publishedAt: { $gte: publishedAfter } });
+        if (closingBefore) filter.push({ closingAt: { $lte: closingBefore } });
+        if (marketType) filter.push({ marketType });
+        if (industries) filter.push({ industries: { $in: industries } });
+        if (isStartup) filter.push({ 'announcer.isStartup': isStartup });
+        if (regions) filter.push({ regions: { $in: regions } });
+
         return this.tnderRepository.aggregateWithPagination(
             [
                 {
@@ -35,24 +47,20 @@ export class TenderService {
                     },
                 },
                 {
+                    $unwind: {
+                        path: '$announcer',
+                        preserveNullAndEmptyArrays: true, // Optional: if you want to keep documents without a matching announcer
+                    },
+                },
+                {
                     $match: {
-                        $and: [
-                            title ? { title: { $regex: keyword, $options: 'i' } } : {},
-                            announcer ? { 'announcer._id': announcer } : {},
-                            publishedAfter ? { publishedAt: { $gte: publishedAfter } } : {},
-                            closingBefore ? { closingAt: { $lte: closingBefore } } : {},
-                            marketType ? { marketType } : {},
-                            industries ? { industries: { $in: industries } } : {},
-                            isStartup ? { 'announcer.isStartup': isStartup } : {},
-                            regions ? { regions: { $in: regions } } : {},
-                        ],
+                        $and: filter.length > 0 ? filter : [{}],
                     },
                 },
                 {
                     $sort: { [sort || 'publishedAt']: -1 },
                 },
                 {
-
                     $project: {
                         title: fields ? fields.includes('title') ? 1 : 0 : 1,
                         announcer: fields ? fields.includes('announcer') ? 1 : 0 : 1,
@@ -64,7 +72,6 @@ export class TenderService {
                         region: fields ? fields.includes('region') ? 1 : 0 : 1,
                         // sources: fields ? fields.includes('sources') ? 1 : 0 : 1,
                     },
-
                 },
             ],
             pagination,
@@ -73,11 +80,12 @@ export class TenderService {
     }
 
     async create(data: CreateTenderArg) {
-        return this.tnderRepository.create(data);
+        const tender = await this.tnderRepository.create(data);
+        return await this.tnderRepository.findOne({ _id: tender._id }, {}, {}, ['announcer', 'sources.newsPaper']);
     }
 
     async findOne(id: Types.ObjectId) {
-        return this.tnderRepository.findOne({ _id: id }); //TODO aggregate to add isFollowed field
+        return this.tnderRepository.findOne({ _id: id }, {}, {}, ['announcer', 'sources.newsPaper']); //TODO aggregate to add isFollowed field
     }
 
     async updateOne(id: Types.ObjectId, data: UpdateTenderArg) {
@@ -95,7 +103,8 @@ export class TenderService {
         if (title) tender.title = title;
         if (sources) {
             sources.forEach(source => {
-                const index = tender.sources.findIndex(s => source.newsPaper.equals(s.newsPaper._id));
+                console.log(source);
+                const index = tender.sources.findIndex(s => s.newsPaper._id.equals(source.newsPaper));
                 if (index === -1 && source.imagesToAdd && source.imagesToAdd.length > 0) {
                     tender.sources.push({
                         newsPaper: source.newsPaper as any,

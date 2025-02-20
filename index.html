@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bid Popup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .popup {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .popup h2 {
+            margin-bottom: 20px;
+        }
+
+        .amount-selector, .quantity-selector {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .amount-selector label,
+        .quantity-selector label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .amount-buttons button,
+        .quantity-buttons button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .amount-buttons span {
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        .quantity-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .quantity-buttons span {
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .actions .submit {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .actions .cancel {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup">
+        <h2>Place Your Bid</h2>
+
+        <div class="amount-selector">
+            <label for="bid-amount">Select Amount:</label>
+            <div class="amount-buttons">
+                <button onclick="adjustAmount(-100)">-100</button>
+                <button onclick="adjustAmount(-500)">-500</button>
+                <span id="bid-amount">0</span>
+                <button onclick="adjustAmount(100)">+100</button>
+                <button onclick="adjustAmount(500)">+500</button>
+            </div>
+        </div>
+
+        <div class="quantity-selector">
+            <label>Select Quantity:</label>
+            <div class="quantity-row">
+                <span>Red:</span>
+                <div class="quantity-buttons">
+                    <button onclick="adjustQuantity('red', -1)">-</button>
+                    <span id="red-quantity">0</span>
+                    <button onclick="adjustQuantity('red', 1)">+</button>
+                </div>
+            </div>
+            <div class="quantity-row">
+                <span>Blue:</span>
+                <div class="quantity-buttons">
+                    <button onclick="adjustQuantity('blue', -1)">-</button>
+                    <span id="blue-quantity">0</span>
+                    <button onclick="adjustQuantity('blue', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="submit">Submit</button>
+            <button class="cancel">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let bidAmount = 0;
+        const quantities = { red: 0, blue: 0 };
+
+        function adjustAmount(amount) {
+            bidAmount = Math.max(0, bidAmount + amount);
+            document.getElementById('bid-amount').textContent = bidAmount;
+        }
+
+        function adjustQuantity(color, change) {
+            quantities[color] = Math.max(0, quantities[color] + change);
+            document.getElementById(`${color}-quantity`).textContent = quantities[color];
+        }
+    </script>
+</body>
+</html>
+

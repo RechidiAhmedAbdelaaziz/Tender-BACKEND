@@ -8,7 +8,7 @@ import { UserRoles } from 'src/core/enums/user-roles.enum';
 import { ListUsersDto } from './dto/list-users.dto';
 import { ApiResult } from 'src/core/types/api-response';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { UserIdParamDto } from './dto/userid-param.dto';
+import { IdParams } from 'src/core/shared/dtos/id-param.dto';
 
 @Controller('user/me')
 @UseGuards(HttpAuthGuard)
@@ -24,8 +24,10 @@ export class UserController {
     @Body() body: UpdateUserBodyDTO,
     @CurrentUser() userId: Types.ObjectId,
   ) {
-    const { name, email, password, phone } = body;
-    const user = await this.userService.updateUser(userId, { name, email, password, phone });
+    const { name, email, password, phone, accountType, expiryDate, industries, notificationSettings, role } = body;
+    const user = await this.userService.updateUser(userId,
+      { name, email, password, phone, accountType, expiryDate, industries, notificationSettings, role }
+    );
     return { data: user };
   }
 
@@ -65,19 +67,21 @@ export class AdminUserController {
   async getAllUsers(
     @Query() query: ListUsersDto
   ): Promise<ApiResult> {
-    const { page, limit, keyword, fields, sort } = query;
-    const result = await this.userService.findAll({ keyword, fields, sort }, { page, limit });
+    const { page, limit, keyword, fields, sort, accountType, role } = query;
+
+    const result = await this.userService.findAll({ keyword, fields, sort, accountType, role }, { page, limit });
+
     return { data: result };
   }
 
   /**
    * Delete a user
    */
-  @Delete(':userId')
-  async deleteUser(@Param() params: UserIdParamDto) {
-    const { userId } = params;
+  @Delete(':id')
+  async deleteUser(@Param() params: IdParams) {
+    const { id } = params;
 
-    await this.userService.deleteUser(new Types.ObjectId(userId));
+    await this.userService.deleteUser(id);
     return
   }
 

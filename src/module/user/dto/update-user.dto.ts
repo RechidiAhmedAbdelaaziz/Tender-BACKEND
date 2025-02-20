@@ -1,5 +1,7 @@
 import { Type } from "class-transformer";
-import { IsString, IsEmail, IsStrongPassword, ValidateNested, IsOptional, IsPhoneNumber } from "class-validator";
+import { IsString, IsEmail, IsStrongPassword, ValidateNested, IsOptional, IsPhoneNumber, IsDate, IsEnum } from "class-validator";
+import { AccountTypes } from "src/core/enums/account-types.enum";
+import { UserRoles } from "src/core/enums/user-roles.enum";
 
 class ChangePasswordDTO {
     /**
@@ -15,6 +17,16 @@ class ChangePasswordDTO {
      */
     @IsStrongPassword({}, { message: 'Invalid password' })
     old: string;
+}
+
+class UpdateNotificationSettingsDTO {
+    /**
+     * The regions to add to the user's notification settings
+     * @example ['Algiers', 'Oran']
+     */
+    regions: string[];
+
+    
 }
 
 export class UpdateUserBodyDTO {
@@ -51,5 +63,42 @@ export class UpdateUserBodyDTO {
     @IsOptional()
     @IsPhoneNumber('DZ')
     phone?: string;
+
+    /**
+     * The industries of the user
+     * 
+     */
+    @IsOptional()
+    @IsString({ each: true })
+    industries?: string[];
+
+    /**
+     * The notification settings of the user
+     * 
+     */
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => UpdateNotificationSettingsDTO)
+    notificationSettings?: UpdateNotificationSettingsDTO;
+
+    /**
+     * The account type of the user
+     * 
+     */
+    @IsOptional()
+    @IsEnum(AccountTypes)
+    accountType?: AccountTypes;
+
+    /**
+     * The role of the user
+     * 
+     */
+    @IsOptional()
+    @IsEnum(UserRoles)
+    role?: UserRoles;
+
+    @IsOptional()
+    @IsDate()
+    expiryDate?: Date;
 
 }

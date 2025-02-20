@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { MongoRepository } from 'src/core/helpers/mongo.helper';
 import { FilterArgs, PaginationArg } from 'src/core/shared/args/pagination.arg';
 import { NewsPaper } from 'src/models/news-paper';
@@ -33,8 +33,13 @@ export class NewsPaperService {
     ) {
         const { keyword, fields, sort } = filters || {};
 
+        const filter: FilterQuery<NewsPaper> = {};
+
+        if (keyword) filter.name = { $regex: keyword, $options: 'i' };
+
+
         return this.newsPaperRepo.findWithPagination({
-            filter: { name: { $regex: keyword, $options: 'i' } },
+            filter: filter,
             options: { sort: { [sort || 'createdAt']: -1 }, fields },
         }, paginationArg);
     }

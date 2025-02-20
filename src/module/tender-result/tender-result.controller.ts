@@ -5,6 +5,8 @@ import { ApiResult } from 'src/core/types/api-response';
 import { IdParams } from 'src/core/shared/dtos/id-param.dto';
 import { CreateResultBody } from './dto/create-result.dto';
 import { UpdateResultBody } from './dto/update-result.dto';
+import { UserRoles } from 'src/core/enums/user-roles.enum';
+import { Role } from '../auth/guards/auth.guard';
 
 @Controller('tender-result')
 export class TenderResultController {
@@ -31,6 +33,7 @@ export class TenderResultController {
   }
 
   @Post()
+  @Role(UserRoles.ADMIN)
   async createOne(
     @Body() data: CreateResultBody,
   ) {

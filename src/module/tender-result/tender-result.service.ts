@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, UpdateResult } from 'mongoose';
+import { FilterQuery, Model, Types, UpdateResult } from 'mongoose';
 import { MongoRepository } from 'src/core/helpers/mongo.helper';
 import { TenderResult } from 'src/models/tender-result.entity';
 import { TenderResultFilterArgs } from './args/result-filter.args';
@@ -25,21 +25,43 @@ export class TenderResultService {
     ) {
         const { publishedAfter, region, tender, type } = resultFilter;
         const { fields, keyword, sort } = filters;
+
+        const filter: FilterQuery<TenderResult> = {};
+
+        if (keyword) filter.title = { $regex: keyword, $options: 'i' };
+        if (publishedAfter) filter.publishedDate = { $gte: publishedAfter };
+        if (region) filter.region = region;
+        if (tender) filter.tender = tender;
+        if (type) filter.type = type;
+
+
         return this.tenderResultRepo.findWithPagination({
-            filter: {
-                title: { $regex: keyword, $options: 'i' },
-                publishedDate: { $gte: publishedAfter },
-                region: region,
-                type: type,
-                tender: tender,
+            filter: filter,
+            options: { sort: { [sort || 'createdAt']: -1 }, fields: fields },
+            populate: [{
+                path: 'tender',
+                select: 'title announcer',
+                populate: ['announcer']
             },
-            options: { sort: { [sort || 'createdAt']: -1 }, fields },
-            populate: ['tender']
+            {
+                path: 'sources.newsPaper',
+                select: '_id'
+            }
+            ]
         }, pagination)
     }
 
     async getOne(id: Types.ObjectId) {
-        return this.tenderResultRepo.findOne({ _id: id }, {}, {}, ['tender', 'sources.newsPaper']);
+        return this.tenderResultRepo.findOne({ _id: id }, {}, {}, [
+            {
+                path: 'tender',
+                select: 'title announcer',
+                populate: ['announcer']
+            },
+            {
+                path: 'sources.newsPaper',
+            }
+        ]);
     }
 
     async deleteOne(id: Types.ObjectId) {
@@ -47,7 +69,18 @@ export class TenderResultService {
     }
 
     async createOne(data: CreateResultArgs) {
-        return this.tenderResultRepo.create(data);
+        const tender = await this.tenderResultRepo.create(data);
+        return await this.tenderResultRepo.findOne({ _id: tender._id }, {}, {}, [
+            {
+                path: 'tender',
+                select: 'title announcer',
+                populate: ['announcer']
+            },
+            {
+                path: 'sources.newsPaper',
+                select: '_id'
+            }
+        ]);
     }
 
     async updateOne(id: Types.ObjectId, data: UpdateResultArgs) {
@@ -62,7 +95,7 @@ export class TenderResultService {
         if (type) result.type = type;
         if (sources) {
             sources.forEach(source => {
-                const index = result.sources.findIndex(s => source.newsPaper.equals(s.newsPaper._id));
+                const index = result.sources.findIndex(s => s.newsPaper._id.equals(source.newsPaper));
                 if (index === -1 && source.imagesToAdd && source.imagesToAdd.length > 0) {
                     result.sources.push({
                         newsPaper: source.newsPaper as any,
@@ -86,7 +119,17 @@ export class TenderResultService {
         }
 
         if (result.isModified()) await result.save();
-        return await result.populate(['tender', 'sources.newsPaper']);
+        return await this.tenderResultRepo.findOne({ _id: id }, {}, {}, [
+            {
+                path: 'tender',
+                select: 'title announcer',
+                populate: ['announcer']
+            },
+            {
+                path: 'sources.newsPaper',
+                select: '_id'
+            }
+        ]);
     }
 
 

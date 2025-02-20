@@ -6,8 +6,8 @@ export interface PaginationArg {
 }
 
 export interface FilterArgs {
-    keyword: string;
-    fields: string;
-    sort: string;
+    keyword?: string;
+    fields?: string;
+    sort?: string;
 }
 

@@ -1,4 +1,4 @@
-import { IsString, IsUrl } from "class-validator";
+import { IsBoolean, IsString, IsUrl } from "class-validator";
 
 export class CreateAnnouncerBody {
     /**
@@ -19,6 +19,7 @@ export class CreateAnnouncerBody {
      * Is the announcer a startup?
      * @example true
      */
+    @IsBoolean()
     isStartup: boolean;
     
 

@@ -30,6 +30,14 @@ export class User extends AbstractSchema {
     @Prop()
     industries?: string[];
 
+    @Prop({ select: false })
+    notificationSettings: {
+        regions: string[];
+    }
+
     @Prop({ default: AccountTypes.freeTrial })
     accountType: AccountTypes
+
+    @Prop()
+    expiryDate: Date;
 }
