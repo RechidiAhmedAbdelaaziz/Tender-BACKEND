@@ -1,0 +1,21 @@
+name: TenderAPI
+
+services:
+  tenderapi-dev:
+    image: tenderapi
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: TenderAPI
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./libs:/usr/src/app/libs
+    command: bash -c "npm run build && npm run start:prod"
+    dns:
+      - 8.8.8.8 # Google DNS
+      - 8.8.4.4 # Google DNS
+    env_file:
+      - .env
+    
