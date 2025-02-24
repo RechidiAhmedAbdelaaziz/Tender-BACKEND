@@ -21,7 +21,7 @@ export class User extends AbstractSchema {
     @Prop()
     phone: string;
 
-    @Prop({ select: false, default: UserRoles.USER })
+    @Prop({ default: UserRoles.USER })
     role: UserRoles;
 
     @Prop({ default: false })
@@ -30,7 +30,11 @@ export class User extends AbstractSchema {
     @Prop()
     industries?: string[];
 
-    @Prop({ select: false })
+    @Prop({
+        select: false, type: {
+            regions: { type: [String], default: [] }
+        }
+    })
     notificationSettings: {
         regions: string[];
     }
@@ -38,6 +42,7 @@ export class User extends AbstractSchema {
     @Prop({ default: AccountTypes.freeTrial })
     accountType: AccountTypes
 
-    @Prop()
+
+    @Prop({ default: () => new Date(new Date().getTime() + 12 * 24 * 60 * 60 * 1000) })
     expiryDate: Date;
 }

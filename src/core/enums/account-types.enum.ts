@@ -1,5 +1,5 @@
 export enum AccountTypes {
-    freeTrial = 'freeTrial',
-    premium = 'premium',
-    expired = 'expired'
+    freeTrial = 'Essai gratuit',
+    premium = 'Payé',
+    expired = 'Expiré',
 }

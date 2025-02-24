@@ -32,9 +32,12 @@ export class TenderService {
         if (publishedAfter) filter.push({ publishedAt: { $gte: publishedAfter } });
         if (closingBefore) filter.push({ closingAt: { $lte: closingBefore } });
         if (marketType) filter.push({ marketType });
-        if (industries) filter.push({ industries: { $in: industries } });
+
         if (isStartup) filter.push({ 'announcer.isStartup': isStartup });
-        if (regions) filter.push({ regions: { $in: regions } });
+        if (regions) {
+            filter.push({ region: { $in: Array.isArray(regions) ? regions : [regions] } });
+        }
+        if (industries) filter.push({ industry: { $in: Array.isArray(industries) ? industries : [industries] } });
 
         return this.tnderRepository.aggregateWithPagination(
             [

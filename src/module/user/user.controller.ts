@@ -9,6 +9,7 @@ import { ListUsersDto } from './dto/list-users.dto';
 import { ApiResult } from 'src/core/types/api-response';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { IdParams } from 'src/core/shared/dtos/id-param.dto';
+import { UpdateMeBodyDTO } from './dto/update-me.dto';
 
 @Controller('user/me')
 @UseGuards(HttpAuthGuard)
@@ -21,12 +22,12 @@ export class UserController {
    */
   @Patch()
   async updateUser(
-    @Body() body: UpdateUserBodyDTO,
+    @Body() body: UpdateMeBodyDTO,
     @CurrentUser() userId: Types.ObjectId,
   ) {
-    const { name, email, password, phone, accountType, expiryDate, industries, notificationSettings, role } = body;
+    const { name, email, password, phone, industries, notificationSettings } = body;
     const user = await this.userService.updateUser(userId,
-      { name, email, password, phone, accountType, expiryDate, industries, notificationSettings, role }
+      { name, email, password, phone, industries, notificationSettings }
     );
     return { data: user };
   }
@@ -71,7 +72,25 @@ export class AdminUserController {
 
     const result = await this.userService.findAll({ keyword, fields, sort, accountType, role }, { page, limit });
 
-    return { data: result };
+    return result;
+  }
+
+  /**
+   * Update a user
+   */
+  @Patch(':id')
+  async updateUser(
+    @Param() params: IdParams,
+    @Body() body: UpdateUserBodyDTO
+  ) {
+    const { id } = params;
+    const { accountType, expiryDate, role } = body;
+
+    const user = await this.userService.updateUser(id,
+      { accountType, expiryDate, role }
+    );
+
+    return { data: user };
   }
 
   /**
